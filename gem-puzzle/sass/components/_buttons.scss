@@ -4,12 +4,13 @@
     justify-content: center;
     align-items: center;
     gap: 10px;
-    font-family: inherit;
     padding: 20px 0;
 }
 
 .button {
     height: 35px;
+    font-family: inherit;
+    font-weight: 500;
     background-color: $color-button;
     color: $color-button-text;
     border: none;

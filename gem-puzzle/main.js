@@ -1,6 +1,7 @@
 let gameSize = 4;
 let gameMatrix;
 let blankBox;
+let movesCounter = 0;
 
 createPageLayout();
 createGame();
@@ -21,9 +22,11 @@ game.addEventListener('click', (e) => {
         swapTiles(blankBoxCoords, boxCoords, gameMatrix);
         createTilesLayout(gameMatrix);
         let gameSize = gameMatrix[0].length;
+        const moves = document.querySelector('.extra__moves');
+        movesCounter++;
+        moves.textContent = `Moves: ${movesCounter}`;
 
         if(isWon(gameMatrix, gameSize)) {
-            console.log(gameMatrix)
             addCongrats();
         }
     }
@@ -49,6 +52,7 @@ shuffleBtn.addEventListener('click', () => {
     }, 60);
 
     game.classList.remove('shuffling');
+    movesCounter = 0;
 })
 
 let blockedTile = null;
@@ -87,7 +91,7 @@ function createPageLayout() {
             <button class="button button_results">Results</button>
         </div>
         <div class="extra">
-            <div class="extra__moves">Moves:</div>
+            <div class="extra__moves">Moves: ${movesCounter}</div>
             <div class="extra__time">Time:</div>
         </div>
         <div class="game"></div>
@@ -116,6 +120,9 @@ sizeVariants.addEventListener('click', (e) => {
     const size = e.target.id.slice(-1);
     game.innerHTML = '';
     createGame(size);
+    const sizeText = e.target.textContent;
+    const title = document.querySelector('.sizes__title');
+    title.textContent = `Frame size: ${sizeText}`;
 })
 
 function createGame(gameSize = 4) {
@@ -140,10 +147,12 @@ function createGame(gameSize = 4) {
 
     let boxesIds = boxes.map(item => Number(item.dataset.matrixId));
     gameMatrix = createMatrix(boxesIds, gameSize);
-    console.log(gameMatrix)
     createTilesLayout(gameMatrix);
     boxes[boxes.length - 1].style.display = 'none';
     blankBox = boxes.length;
+    const moves = document.querySelector('.extra__moves');
+    movesCounter = 0;
+    moves.textContent = `Moves: ${movesCounter}`;
 }
 
 function createMatrix(arr, size) {
