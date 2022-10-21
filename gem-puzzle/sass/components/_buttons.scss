@@ -1,0 +1,39 @@
+.buttons {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    font-family: inherit;
+    padding: 20px 0;
+}
+
+.button {
+    height: 35px;
+    background-color: $color-button;
+    color: $color-button-text;
+    border: none;
+    cursor: pointer;
+    border-radius: 10px;
+    transition: 0.5s;
+
+    &:hover {
+        background-color: $color-button-hover;
+    }
+
+    &_shuffle {
+        width: 150px;
+    }
+
+    &_stop {
+        width: 75px;
+    }
+
+    &_save {
+        width: 75px;
+    }
+
+    &_results {
+        width: 112px;
+    }
+}

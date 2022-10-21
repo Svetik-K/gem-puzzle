@@ -1,0 +1,27 @@
+.sizes {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 20px;
+
+    &__title {
+        margin-bottom: 10px;
+    }
+
+    &__variants {
+        display: flex;
+        gap: 15px;
+
+        a {
+            text-decoration: none;
+            color: $color-button;
+            font-weight: 700;
+            transition: 0.5s;
+
+            &:hover {
+                color: $color-button-hover;
+                
+            }
+        }
+    }
+}
