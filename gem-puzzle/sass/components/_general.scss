@@ -15,6 +15,10 @@ body {
     align-items: center;
     padding: 0 50px;
     margin: 0 auto;
-    background-color: $color-light;
+    background-color: $color-white;
     user-select: none;
+
+    @media all and (max-width: 767px) {
+        padding: 0 20px;
+    }
 }

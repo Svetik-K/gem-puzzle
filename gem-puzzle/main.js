@@ -2,12 +2,15 @@ let gameSize = 4;
 let gameMatrix;
 let blankBox;
 let movesCounter = 0;
+let minutes = '00';
+let seconds = '00';
+let gameCounter;
 
 createPageLayout();
 createGame();
 
 const game = document.querySelector('.game');
-
+const saveBtn = document.querySelector('.button_save');
 game.addEventListener('click', (e) => {
     const currBox = e.target.closest('.game__box');
     if(!currBox) {
@@ -28,17 +31,20 @@ game.addEventListener('click', (e) => {
 
         if(isWon(gameMatrix, gameSize)) {
             addCongrats();
+            clearInterval(gameCounter);
+            saveBtn.disabled = true;
+            saveBtn.classList.add('button_disabled');
+            stopBtn.disabled = true;
+            stopBtn.classList.add('button_disabled');
         }
     }
 })
 
-const shuffleBtn = document.querySelector('.button_shuffle');
-const maxShuffleNum = 50;
+const maxShuffleNum = 1;
 let timer;
 shuffleBtn.addEventListener('click', () => {
     let shuffleCounter = 0;
     clearInterval(timer);
-    game.classList.add('shuffling');
 
     timer = setInterval(() => {
         randomMove(gameMatrix);
@@ -49,11 +55,64 @@ shuffleBtn.addEventListener('click', () => {
             clearInterval(timer);
         }
 
-    }, 60);
+    }, 30);
 
     game.classList.remove('shuffling');
     movesCounter = 0;
+    shuffleBtn = document.querySelector('.button_shuffle');
+    shuffleBtn.disabled = true;
+    shuffleBtn.classList.add('button_disabled');
+
+    setTimeout(() => {
+        setGameCounter();
+        const stopBtn = document.querySelector('.button_stop');
+        stopBtn.disabled = false;
+        stopBtn.classList.remove('button_disabled');
+    }, 2500);
 })
+
+function setGameCounter() {
+    clearInterval(gameCounter);
+    gameCounter = setInterval(() => { 
+        if(seconds == 59) {
+            seconds = '00';
+            minutes = parseInt(minutes) + 1;
+        }
+
+        seconds = parseInt(seconds) + 1;
+        if(seconds < 10) {
+            seconds = '0' + seconds;
+        }
+        if(minutes.toString().length === 1) {
+            minutes = '0' + minutes;
+        }
+        if( minutes == 59 && seconds == 59) {
+            setCounterToNull();
+            //добавляем Гейм овер
+        }
+        const time = document.querySelector('.extra__time');
+        time.textContent = `Time: ${minutes}:${seconds}`;     
+
+    }, 1000);
+}
+
+const stopBtn = document.querySelector('.button_stop');
+stopBtn.addEventListener('click', (e) => {
+    if(stopBtn.textContent === 'Stop') {
+        freezeCounter();
+    } else {
+        setGameCounter();
+        stopBtn.textContent = 'Stop'
+        game.classList.remove('shuffling');
+    } 
+    e.preventDefault();
+})
+
+function freezeCounter() {
+    clearInterval(gameCounter);
+    game.classList.add('shuffling');
+    stopBtn.textContent = 'Start';
+}
 
 let blockedTile = null;
 function randomMove(matrix) {
@@ -92,7 +151,7 @@ function createPageLayout() {
         </div>
         <div class="extra">
             <div class="extra__moves">Moves: ${movesCounter}</div>
-            <div class="extra__time">Time:</div>
+            <div class="extra__time">Time: ${minutes}:${seconds}</div>
         </div>
         <div class="game"></div>
         <div class="sizes">
@@ -123,6 +182,9 @@ sizeVariants.addEventListener('click', (e) => {
     const sizeText = e.target.textContent;
     const title = document.querySelector('.sizes__title');
     title.textContent = `Frame size: ${sizeText}`;
+    stopBtn.textContent = 'Stop';
+    saveBtn.classList.remove('button_disabled');
+    
 })
 
 function createGame(gameSize = 4) {
@@ -143,8 +205,6 @@ function createGame(gameSize = 4) {
     })
 
     const boxes = Array.from(document.querySelectorAll('.game__box'));
-    document.querySelector('.button_shuffle').disabled = false;
-
     let boxesIds = boxes.map(item => Number(item.dataset.matrixId));
     gameMatrix = createMatrix(boxesIds, gameSize);
     createTilesLayout(gameMatrix);
@@ -153,6 +213,14 @@ function createGame(gameSize = 4) {
     const moves = document.querySelector('.extra__moves');
     movesCounter = 0;
     moves.textContent = `Moves: ${movesCounter}`;
+    shuffleBtn = document.querySelector('.button_shuffle');
+    shuffleBtn.disabled = false;
+    shuffleBtn.classList.remove('button_disabled');
+    const stopBtn = document.querySelector('.button_stop');
+    stopBtn.disabled = true;
+    stopBtn.classList.add('button_disabled');
+    game.classList.add('shuffling');
+    setCounterToNull();
 }
 
 function createMatrix(arr, size) {
@@ -241,7 +309,14 @@ function addCongrats() {
     setTimeout(() => {
         congrats.style.display = 'flex';
         game.classList.toggle('shuffling');
-        document.querySelector('.button_shuffle').disabled = true;
     }, 500);
     
+}
+
+function setCounterToNull() {
+    clearInterval(gameCounter);
+    minutes = '00';
+    seconds = '00';
+    const time = document.querySelector('.extra__time');
+    time.textContent = `Time: ${minutes}:${seconds}`;  
 }

@@ -10,16 +10,19 @@
 
     &__variants {
         display: flex;
-        gap: 15px;
+        flex-wrap: wrap;
+        justify-content: center;
+        column-gap: 15px;
+        row-gap: 5px;
 
         a {
             text-decoration: none;
-            color: $color-button;
+            color: darken($color-pink, 10%);
             font-weight: 700;
-            transition: 0.5s;
+            transition: 0.3s;
 
             &:hover {
-                color: $color-button-hover;
+                color: darken($color-pink, 20%);
                 
             }
         }

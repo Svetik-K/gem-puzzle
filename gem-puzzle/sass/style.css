@@ -57,23 +57,23 @@ table {
   justify-content: center;
   align-items: center;
   gap: 10px;
-  padding: 20px 0;
+  padding: 20px 0 15px;
 }
 
 .button {
   height: 35px;
   font-family: inherit;
   font-weight: 500;
-  background-color: #FDDCC4;
+  background: linear-gradient(98.81deg, #FFF0F0 -0.82%, #FFDFDF 101.53%);
   color: #292929;
   border: none;
   cursor: pointer;
   border-radius: 10px;
-  transition: 0.5s;
+  transition: 0.3s;
 }
 
 .button:hover {
-  background-color: #F1CDB3;
+  background: #ffd0d0;
 }
 
 .button_shuffle {
@@ -90,6 +90,10 @@ table {
 
 .button_results {
   width: 112px;
+}
+
+.button_disabled {
+  opacity: 0.2;
 }
 
 body {
@@ -109,8 +113,14 @@ body {
   align-items: center;
   padding: 0 50px;
   margin: 0 auto;
-  background-color: #F6F6F6;
+  background-color: #FFFFFF;
   user-select: none;
+}
+
+@media all and (max-width: 767px) {
+  .container {
+    padding: 0 20px;
+  }
 }
 
 .extra {
@@ -120,11 +130,17 @@ body {
   margin-bottom: 10px;
 }
 
+@media all and (max-width: 414px) {
+  .extra {
+    gap: 50px;
+  }
+}
+
 .game {
   position: relative;
   width: 100%;
   padding-bottom: 100%;
-  border: 3px solid #F1CDB3;
+  border: 3px solid #ffacac;
   border-radius: 10px;
   margin-bottom: 20px;
 }
@@ -145,7 +161,7 @@ body {
 .game__tile {
   width: 85%;
   height: 85%;
-  background-color: #FDDCC4;
+  background: linear-gradient(98.81deg, #FFF0F0 -0.82%, #FFDFDF 101.53%);
   color: #292929;
   border-radius: 7px;
   font-size: inherit;
@@ -156,7 +172,7 @@ body {
 }
 
 .game__tile:hover {
-  background-color: #F1CDB3;
+  background: #ffd0d0;
 }
 
 .game__congrats {
@@ -168,10 +184,18 @@ body {
   top: 50%;
   transform: translateY(-50%);
   background: url(../5.jpg);
+  background-size: cover;
   text-align: center;
   font-size: 300%;
+  line-height: 130%;
   align-items: center;
   justify-content: center;
+}
+
+@media all and (max-width: 414px) {
+  .game__congrats {
+    font-size: 200%;
+  }
 }
 
 .game-size-3 {
@@ -225,17 +249,20 @@ body {
 
 .sizes__variants {
   display: flex;
-  gap: 15px;
+  flex-wrap: wrap;
+  justify-content: center;
+  column-gap: 15px;
+  row-gap: 5px;
 }
 
 .sizes__variants a {
   text-decoration: none;
-  color: #FDDCC4;
+  color: #ffacac;
   font-weight: 700;
-  transition: 0.5s;
+  transition: 0.3s;
 }
 
 .sizes__variants a:hover {
-  color: #F1CDB3;
+  color: #ff7979;
 }
 /*# sourceMappingURL=style.css.map */

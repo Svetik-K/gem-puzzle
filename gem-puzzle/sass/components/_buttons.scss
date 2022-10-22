@@ -4,22 +4,22 @@
     justify-content: center;
     align-items: center;
     gap: 10px;
-    padding: 20px 0;
+    padding: 20px 0 15px;
 }
 
 .button {
     height: 35px;
     font-family: inherit;
     font-weight: 500;
-    background-color: $color-button;
+    background: $color-pink-gradient;
     color: $color-button-text;
     border: none;
     cursor: pointer;
     border-radius: 10px;
-    transition: 0.5s;
+    transition: 0.3s;
 
     &:hover {
-        background-color: $color-button-hover;
+        background: darken($color-pink, 3%);
     }
 
     &_shuffle {
@@ -36,5 +36,9 @@
 
     &_results {
         width: 112px;
+    }
+
+    &_disabled {
+        opacity: 0.2;
     }
 }

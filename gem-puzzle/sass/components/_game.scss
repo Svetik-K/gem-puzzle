@@ -2,7 +2,7 @@
     position: relative;
     width: 100%;
     padding-bottom: 100%;
-    border: 3px solid $color-button-hover;
+    border: 3px solid darken($color-pink, 10%);
     border-radius: 10px;
     margin-bottom: 20px;
 
@@ -22,7 +22,7 @@
     &__tile {
         width: 85%;
         height: 85%;
-        background-color: $color-button;
+        background: $color-pink-gradient;
         color: $color-button-text;
         border-radius: 7px;
         font-size: inherit;
@@ -32,7 +32,7 @@
         border: 2px solid $color-button-text;
 
         &:hover {
-            background-color: $color-button-hover;
+            background: darken($color-pink, 3%);
         }
     }
 
@@ -45,11 +45,18 @@
         top: 50%;
         transform: translateY(-50%);
         background: url(../5.jpg);
+        background-size: cover;
         text-align: center;
         font-size: 300%;
+        line-height: 130%;
         align-items: center;
         justify-content: center;
+
+        @media all and (max-width: 414px) {
+            font-size: 200%;
+        }
     }
+
 }
 
 .game-size-3 {
