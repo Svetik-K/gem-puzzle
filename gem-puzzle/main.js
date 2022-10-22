@@ -40,7 +40,7 @@ game.addEventListener('click', (e) => {
     }
 })
 
-const maxShuffleNum = 1;
+const maxShuffleNum = 70;
 let timer;
 shuffleBtn.addEventListener('click', () => {
     let shuffleCounter = 0;
@@ -88,7 +88,7 @@ function setGameCounter() {
         }
         if( minutes == 59 && seconds == 59) {
             setCounterToNull();
-            //добавляем Гейм овер
+            addLose();
         }
         const time = document.querySelector('.extra__time');
         time.textContent = `Time: ${minutes}:${seconds}`;     
@@ -308,7 +308,20 @@ function addCongrats() {
 
     setTimeout(() => {
         congrats.style.display = 'flex';
-        game.classList.toggle('shuffling');
+        game.classList.add('shuffling');
+    }, 500);
+    
+}
+
+function addLose() {
+    const lose = document.createElement('div');
+    lose.classList.add('game__lose');
+    lose.textContent = 'YOU LOSE!!!';
+    game.append(lose);
+
+    setTimeout(() => {
+        lose.style.display = 'flex';
+        game.classList.add('shuffling');
     }, 500);
     
 }

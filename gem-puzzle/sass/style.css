@@ -198,6 +198,29 @@ body {
   }
 }
 
+.game__lose {
+  display: none;
+  width: 100%;
+  height: 200px;
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  background: #000000;
+  color: #FFFFFF;
+  text-align: center;
+  font-size: 300%;
+  font-weight: bold;
+  align-items: center;
+  justify-content: center;
+}
+
+@media all and (max-width: 414px) {
+  .game__lose {
+    font-size: 200%;
+  }
+}
+
 .game-size-3 {
   width: 33.33%;
   height: 33.33%;
