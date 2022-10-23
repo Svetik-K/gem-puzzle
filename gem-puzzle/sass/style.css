@@ -97,6 +97,7 @@ table {
 }
 
 body {
+  position: relative;
   width: 100%;
   height: 100%;
   background: url(../5.jpg);
@@ -186,15 +187,15 @@ body {
   background: url(../5.jpg);
   background-size: cover;
   text-align: center;
-  font-size: 300%;
-  line-height: 130%;
+  font-size: 200%;
+  line-height: 110%;
   align-items: center;
   justify-content: center;
 }
 
 @media all and (max-width: 414px) {
   .game__congrats {
-    font-size: 200%;
+    font-size: 150%;
   }
 }
 
@@ -287,5 +288,46 @@ body {
 
 .sizes__variants a:hover {
   color: #ff7979;
+}
+
+.results {
+  width: 100%;
+  height: 100vh;
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: none;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0.6);
+}
+
+.results__table {
+  width: 300px;
+  height: 410px;
+  border-radius: 10px;
+  border: 2px solid #292929;
+  background: linear-gradient(98.81deg, #FFF0F0 -0.82%, #FFDFDF 101.53%);
+  color: #292929;
+  overflow: hidden;
+  padding: 20px 30px;
+}
+
+.results__title {
+  font-size: 200%;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.results__list {
+  list-style-type: decimal;
+  padding-left: 30px;
+}
+
+.list__item {
+  font-size: 140%;
+  padding-bottom: 10px;
+  padding-left: 10px;
 }
 /*# sourceMappingURL=style.css.map */

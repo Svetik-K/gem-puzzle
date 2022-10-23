@@ -5,12 +5,26 @@ let movesCounter = 0;
 let minutes = '00';
 let seconds = '00';
 let gameCounter;
+let res;
 
 createPageLayout();
 createGame();
 
 const game = document.querySelector('.game');
 const saveBtn = document.querySelector('.button_save');
+const resultesBtn = document.querySelector('.button_results');
+
+resultesBtn.addEventListener('click', () => {
+    createResultsTable();
+    document.querySelector('.results').style.display = 'flex';
+});
+
+document.addEventListener('click', (e) => {
+    if(e.target.classList.contains('results')) {
+        document.querySelector('.results'). style.display = 'none';
+    }
+})
+
 game.addEventListener('click', (e) => {
     const currBox = e.target.closest('.game__box');
     if(!currBox) {
@@ -36,6 +50,17 @@ game.addEventListener('click', (e) => {
             saveBtn.classList.add('button_disabled');
             stopBtn.disabled = true;
             stopBtn.classList.add('button_disabled');
+
+            if(!localStorage.results) {
+                res = [movesCounter];
+                localStorage.results = JSON.stringify(res);
+                createResultsTable();
+            } else {
+                res = JSON.parse(localStorage.results);
+                res.push(movesCounter);
+                localStorage.results = JSON.stringify(res);
+                createResultsTable();
+            }   
         }
     }
 })
@@ -55,7 +80,7 @@ shuffleBtn.addEventListener('click', () => {
             clearInterval(timer);
         }
 
-    }, 30);
+    }, 35);
 
     game.classList.remove('shuffling');
     movesCounter = 0;
@@ -183,8 +208,7 @@ sizeVariants.addEventListener('click', (e) => {
     const title = document.querySelector('.sizes__title');
     title.textContent = `Frame size: ${sizeText}`;
     stopBtn.textContent = 'Stop';
-    saveBtn.classList.remove('button_disabled');
-    
+    saveBtn.classList.remove('button_disabled');   
 })
 
 function createGame(gameSize = 4) {
@@ -303,7 +327,7 @@ function isWon(matrix, gameSize) {
 function addCongrats() {
     const congrats = document.createElement('div');
     congrats.classList.add('game__congrats');
-    congrats.textContent = 'Congratulations! You Won!';
+    congrats.textContent = `Hooray! You solved the puzzle in ${minutes}:${seconds} and ${movesCounter} moves!!`;
     game.append(congrats);
 
     setTimeout(() => {
@@ -332,4 +356,36 @@ function setCounterToNull() {
     seconds = '00';
     const time = document.querySelector('.extra__time');
     time.textContent = `Time: ${minutes}:${seconds}`;  
+}
+
+function createResultsTable() {
+    const resultLayer = document.createElement('div');
+    resultLayer.classList.add('results');
+
+    const resultsTable = document.createElement('div');
+    resultsTable.classList.add('results__table');
+
+    const title = document.createElement('p');
+    title.classList.add('results__title');
+    title.textContent = 'Top Score';
+    resultsTable.append(title);
+
+    const resultsList = document.createElement('ol');
+    resultsList.classList.add('results__list');
+  
+    if(localStorage.results) {
+        const resultsArr = JSON.parse(localStorage.results);
+        console.log(resultsArr)
+        resultsArr.sort((a, b) => a - b).forEach(item => {
+        const listItem = document.createElement('li');
+        listItem.classList.add('list__item');
+        listItem.textContent = `${item}  moves`;
+        resultsList.appendChild(listItem);
+        console.log(listItem)
+        })
+    }
+    
+    resultsTable.append(resultsList);
+    resultLayer.append(resultsTable);
+    document.body.append(resultLayer);
 }
