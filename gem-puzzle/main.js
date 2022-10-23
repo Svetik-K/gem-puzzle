@@ -13,6 +13,9 @@ createGame();
 const game = document.querySelector('.game');
 const saveBtn = document.querySelector('.button_save');
 const resultesBtn = document.querySelector('.button_results');
+const audio = document.getElementById('audio');
+audio.volume = 0;
+const soundSwitcher = document.querySelector('input');
 
 resultesBtn.addEventListener('click', () => {
     createResultsTable();
@@ -26,6 +29,10 @@ document.addEventListener('click', (e) => {
 })
 
 game.addEventListener('click', (e) => {
+    if(soundSwitcher.checked === true) {
+        audio.volume = 0.3;
+        audio.play();
+    }
     const currBox = e.target.closest('.game__box');
     if(!currBox) {
         return;
@@ -168,6 +175,10 @@ function createPageLayout() {
     const gameContainer = document.createElement('div');
     gameContainer.classList.add('container');
     gameContainer.innerHTML = `
+        <div class="sound">
+            Sound off<input type="checkbox"> on
+        </div>
+        <audio id="audio" src="./audio/sound_click.mp3"></audio>
         <div class="buttons">
             <button class="button button_shuffle">Shuffle and Start</button>
             <button class="button button_stop">Stop</button>
@@ -389,3 +400,61 @@ function createResultsTable() {
     resultLayer.append(resultsTable);
     document.body.append(resultLayer);
 }
+
+
+
+
+
+// game.addEventListener('mousedown', (e) => {
+//     const currBox = e.target.closest('.game__box');
+//     if(!currBox) {
+//         return;
+//     }
+  
+//     let emptyTile;
+//     let boxes = document.querySelectorAll('.game__box');
+//     boxes.forEach(item => {
+//         if(item.dataset.matrixId == boxes.length) {
+//             emptyTile = item;
+//         }
+//     });
+//     emptyTile.draggable = true;
+//     currBox.draggable = true;
+
+//     currBox.addEventListener('dragstart', handleDragStart);
+//     currBox.addEventListener('dragover', handleDragOver);
+//     // currBox.addEventListener('dragenter', handleDragEnter);
+//     // currBox.addEventListener('dragleave', handleDragLeave);
+//     currBox.addEventListener('dragend', handleDragEnd);
+//     currBox.addEventListener('drop', handleDrop);
+
+
+//     let itemToDrag;
+//     function handleDragStart(e) {
+//         this.style.opacity = '0.4';
+//         itemToDrag = currBox;
+
+//         e.dataTransfer.effectAllowed = 'move';
+//         e.dataTransfer.setData('text/html', itemToDrag.innerHTML);
+//     }
+    
+//     function handleDragEnd(e) {
+//         this.style.opacity = '1';
+//     }
+
+//     function handleDragOver(e) {
+//         e.preventDefault();
+//         return false;
+//     }
+
+//     function handleDrop(e) {
+//         e.stopPropagation();
+        
+//         if (itemToDrag !== this) {
+//             itemToDrag.innerHTML = this.innerHTML;
+//             this.innerHTML = e.dataTransfer.getData('text/html');
+//         }
+
+//         return false;
+//     }
+// })

@@ -57,7 +57,7 @@ table {
   justify-content: center;
   align-items: center;
   gap: 10px;
-  padding: 20px 0 15px;
+  padding: 10px 0 15px;
 }
 
 .button {
@@ -100,7 +100,7 @@ body {
   position: relative;
   width: 100%;
   height: 100%;
-  background: url(../5.jpg);
+  background: url(../images/5.jpg);
   font-family: 'Roboto', sans-serif;
   background-size: cover;
   background-repeat: no-repeat;
@@ -143,7 +143,7 @@ body {
   padding-bottom: 100%;
   border: 3px solid #ffacac;
   border-radius: 10px;
-  margin-bottom: 20px;
+  margin-bottom: 10px;
 }
 
 .game__box {
@@ -184,7 +184,7 @@ body {
   left: 0;
   top: 50%;
   transform: translateY(-50%);
-  background: url(../5.jpg);
+  background: url(../images/5.jpg);
   background-size: cover;
   text-align: center;
   font-size: 200%;
@@ -329,5 +329,50 @@ body {
   font-size: 140%;
   padding-bottom: 10px;
   padding-left: 10px;
+}
+
+.sound {
+  display: flex;
+  align-items: center;
+  padding: 10px 0 0;
+}
+
+input[type="checkbox"] {
+  -webkit-appearance: none;
+  position: relative;
+  width: 30px;
+  height: 15px;
+  outline: none;
+  background: #c6c6c6;
+  border-radius: 7.5px;
+  transition: 0.5s;
+  box-shadow: inset 0 0 2px rgba(0, 0, 0, 0.2);
+  margin: 0 10px 0;
+  cursor: pointer;
+}
+
+input[type="checkbox"]:before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  background-color: #FFFFFF;
+  transform: scale(1.1);
+  box-shadow: 0 1px 2.5px rgba(0, 0, 0, 0.2);
+}
+
+input:checked[type="checkbox"] {
+  background: #FFDFDF;
+}
+
+input:checked[type="checkbox"]:before {
+  left: 15px;
+}
+
+.audio {
+  display: none;
 }
 /*# sourceMappingURL=style.css.map */

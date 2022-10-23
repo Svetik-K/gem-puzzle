@@ -4,7 +4,7 @@
     padding-bottom: 100%;
     border: 3px solid darken($color-pink, 10%);
     border-radius: 10px;
-    margin-bottom: 20px;
+    margin-bottom: 10px;
 
     &__box {
         position: absolute;
@@ -44,7 +44,7 @@
         left: 0;
         top: 50%;
         transform: translateY(-50%);
-        background: url(../5.jpg);
+        background: url(../images/5.jpg);
         background-size: cover;
         text-align: center;
         font-size: 200%;
