@@ -7,15 +7,38 @@ let seconds = '00';
 let gameCounter;
 let res;
 
-createPageLayout();
-createGame();
+if(localStorage.currGame) {
+    confirm('Continue saved game?');
+    if(true) {
+        createPageLayout();
+        loadSavedGame();
+    }
+} else {
+    createPageLayout();
+    createGame();
+}
 
 const game = document.querySelector('.game');
 const saveBtn = document.querySelector('.button_save');
 const resultesBtn = document.querySelector('.button_results');
+
 const audio = document.getElementById('audio');
 audio.volume = 0;
 const soundSwitcher = document.querySelector('input');
+
+saveBtn.addEventListener('click', () => {
+    const game = document.querySelector('.game');
+    let savedGame = game.innerHTML;
+    const extra = {
+        'moves': movesCounter,
+        'minutes': minutes,
+        'seconds': seconds,
+        'matrix': gameMatrix 
+    }
+    localStorage.currGame = JSON.stringify(savedGame);
+    localStorage.extra = JSON.stringify(extra);
+    alert('Your current game has been saved');
+})
 
 resultesBtn.addEventListener('click', () => {
     createResultsTable();
@@ -30,13 +53,14 @@ document.addEventListener('click', (e) => {
 
 game.addEventListener('click', (e) => {
     if(soundSwitcher.checked === true) {
-        audio.volume = 0.3;
+        audio.volume = 0.4;
         audio.play();
     }
     const currBox = e.target.closest('.game__box');
     if(!currBox) {
         return;
     }
+
     const boxNum = Number(currBox.dataset.matrixId);
     const boxCoords = findCoords(boxNum, gameMatrix);
     const blankBoxCoords = findCoords(blankBox, gameMatrix);
@@ -45,6 +69,7 @@ game.addEventListener('click', (e) => {
     if(isSwappable) {
         swapTiles(blankBoxCoords, boxCoords, gameMatrix);
         createTilesLayout(gameMatrix);
+
         let gameSize = gameMatrix[0].length;
         const moves = document.querySelector('.extra__moves');
         movesCounter++;
@@ -53,10 +78,8 @@ game.addEventListener('click', (e) => {
         if(isWon(gameMatrix, gameSize)) {
             addCongrats();
             clearInterval(gameCounter);
-            saveBtn.disabled = true;
-            saveBtn.classList.add('button_disabled');
-            stopBtn.disabled = true;
-            stopBtn.classList.add('button_disabled');
+            disableSaveBtn();
+            disableStopBtn(); 
 
             if(!localStorage.results) {
                 res = [movesCounter];
@@ -74,6 +97,7 @@ game.addEventListener('click', (e) => {
 
 const maxShuffleNum = 70;
 let timer;
+const shuffleBtn = document.querySelector('.button_shuffle');
 shuffleBtn.addEventListener('click', () => {
     let shuffleCounter = 0;
     clearInterval(timer);
@@ -91,15 +115,11 @@ shuffleBtn.addEventListener('click', () => {
 
     game.classList.remove('shuffling');
     movesCounter = 0;
-    shuffleBtn = document.querySelector('.button_shuffle');
-    shuffleBtn.disabled = true;
-    shuffleBtn.classList.add('button_disabled');
+    disableShuffleBtn();
 
     setTimeout(() => {
         setGameCounter();
-        const stopBtn = document.querySelector('.button_stop');
-        stopBtn.disabled = false;
-        stopBtn.classList.remove('button_disabled');
+        enableStopBtn();
     }, 2500);
 })
 
@@ -243,19 +263,15 @@ function createGame(gameSize = 4) {
     let boxesIds = boxes.map(item => Number(item.dataset.matrixId));
     gameMatrix = createMatrix(boxesIds, gameSize);
     createTilesLayout(gameMatrix);
-    boxes[boxes.length - 1].style.display = 'none';
+    boxes[boxes.length - 1].style.visibility = 'hidden';
     blankBox = boxes.length;
     const moves = document.querySelector('.extra__moves');
     movesCounter = 0;
     moves.textContent = `Moves: ${movesCounter}`;
-    shuffleBtn = document.querySelector('.button_shuffle');
-    shuffleBtn.disabled = false;
-    shuffleBtn.classList.remove('button_disabled');
-    const stopBtn = document.querySelector('.button_stop');
-    stopBtn.disabled = true;
-    stopBtn.classList.add('button_disabled');
-    game.classList.add('shuffling');
+    enableShuffleBtn();
+    disableStopBtn();
     setCounterToNull();
+    game.classList.add('shuffling');
 }
 
 function createMatrix(arr, size) {
@@ -277,12 +293,18 @@ function createMatrix(arr, size) {
     return matrix;
 }
 
-function createTilesLayout(matrix) {
-    for(let y = 0; y < matrix.length; y++) {
-        for(let x = 0; x < matrix[y].length; x++) {
-            const matrixItem = matrix[y][x];
+function createTilesLayout(gameMatrix) {
+
+    for(let y = 0; y < gameMatrix.length; y++) {
+        for(let x = 0; x < gameMatrix[y].length; x++) {
+            const matrixItem = gameMatrix[y][x];
             const boxes = Array.from(document.querySelectorAll('.game__box'));
-            let box = boxes[matrixItem - 1];
+            let box;
+            for(let item of boxes) {
+                if(item.dataset.matrixId == matrixItem) {
+                    box = item;
+                }
+            }
             setTilesTransform(box, x, y);
         }
     }
@@ -300,10 +322,10 @@ function shuffleTiles(arr) {
         .map(({value}) => value);
 }
 
-function findCoords(number, matrix) {
-    for(let y = 0; y < matrix.length; y++) {
-        for(let x = 0; x < matrix[y].length; x++) {
-            if(matrix[y][x] === number) {
+function findCoords(number, gameMatrix) {
+    for(let y = 0; y < gameMatrix.length; y++) {
+        for(let x = 0; x < gameMatrix[y].length; x++) {
+            if(gameMatrix[y][x] == number) {
                 return { x, y };
             }
         }
@@ -386,13 +408,11 @@ function createResultsTable() {
   
     if(localStorage.results) {
         const resultsArr = JSON.parse(localStorage.results);
-        console.log(resultsArr)
         resultsArr.sort((a, b) => a - b).forEach(item => {
         const listItem = document.createElement('li');
         listItem.classList.add('list__item');
         listItem.textContent = `${item}  moves`;
         resultsList.appendChild(listItem);
-        console.log(listItem)
         })
     }
     
@@ -401,60 +421,54 @@ function createResultsTable() {
     document.body.append(resultLayer);
 }
 
+function disableShuffleBtn() {
+    const shuffleBtn = document.querySelector('.button_shuffle');
+    shuffleBtn.disabled = true;
+    shuffleBtn.classList.add('button_disabled');
+}
 
+function enableShuffleBtn() {
+    const shuffleBtn = document.querySelector('.button_shuffle');
+    shuffleBtn.disabled = false;
+    shuffleBtn.classList.remove('button_disabled');
+}
 
+function disableStopBtn() {
+    const stopBtn = document.querySelector('.button_stop');
+    stopBtn.disabled = true;
+    stopBtn.classList.add('button_disabled');
+}
 
+function enableStopBtn() {
+    const stopBtn = document.querySelector('.button_stop');
+    stopBtn.disabled = false;
+    stopBtn.classList.remove('button_disabled');
+}
 
-// game.addEventListener('mousedown', (e) => {
-//     const currBox = e.target.closest('.game__box');
-//     if(!currBox) {
-//         return;
-//     }
-  
-//     let emptyTile;
-//     let boxes = document.querySelectorAll('.game__box');
-//     boxes.forEach(item => {
-//         if(item.dataset.matrixId == boxes.length) {
-//             emptyTile = item;
-//         }
-//     });
-//     emptyTile.draggable = true;
-//     currBox.draggable = true;
+function disableSaveBtn() {
+    const saveBtn = document.querySelector('.button_save');
+    saveBtn.disabled = true;
+    saveBtn.classList.add('button_disabled');
+}
 
-//     currBox.addEventListener('dragstart', handleDragStart);
-//     currBox.addEventListener('dragover', handleDragOver);
-//     // currBox.addEventListener('dragenter', handleDragEnter);
-//     // currBox.addEventListener('dragleave', handleDragLeave);
-//     currBox.addEventListener('dragend', handleDragEnd);
-//     currBox.addEventListener('drop', handleDrop);
+function loadSavedGame() {
+    const savedGame = JSON.parse(localStorage.currGame);
+    const extra = JSON.parse(localStorage.extra);
+    movesCounter = extra.moves;
+    minutes = extra.minutes;
+    seconds = extra.seconds;
+    gameMatrix = extra.matrix;
+    const game = document.querySelector('.game');
+    game.innerHTML = '';
+    game.innerHTML = savedGame;
+    blankBox = gameMatrix.length ** 2;
+    const moves = document.querySelector('.extra__moves');
+    moves.textContent = `Moves: ${movesCounter}`;
+    disableShuffleBtn();
+    setGameCounter();
+    game.classList.remove('shuffling');
 
+    delete localStorage.currGame;
+    delete localStorage.extra;
+}
 
-//     let itemToDrag;
-//     function handleDragStart(e) {
-//         this.style.opacity = '0.4';
-//         itemToDrag = currBox;
-
-//         e.dataTransfer.effectAllowed = 'move';
-//         e.dataTransfer.setData('text/html', itemToDrag.innerHTML);
-//     }
-    
-//     function handleDragEnd(e) {
-//         this.style.opacity = '1';
-//     }
-
-//     function handleDragOver(e) {
-//         e.preventDefault();
-//         return false;
-//     }
-
-//     function handleDrop(e) {
-//         e.stopPropagation();
-        
-//         if (itemToDrag !== this) {
-//             itemToDrag.innerHTML = this.innerHTML;
-//             this.innerHTML = e.dataTransfer.getData('text/html');
-//         }
-
-//         return false;
-//     }
-// })
