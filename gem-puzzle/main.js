@@ -8,11 +8,15 @@ let gameCounter;
 let res;
 
 if(localStorage.currGame) {
-    confirm('Continue saved game?');
-    if(true) {
+    let answer = confirm('Continue saved game?');
+    if(answer === true) {
         createPageLayout();
         loadSavedGame();
+    }else {
+        createPageLayout();
+        createGame();
     }
+
 } else {
     createPageLayout();
     createGame();
@@ -27,6 +31,17 @@ audio.volume = 0;
 const soundSwitcher = document.querySelector('input');
 
 saveBtn.addEventListener('click', () => {
+    if(saveBtn.textContent === 'Save') {
+        saveCurrentGame();
+    }
+    else if(saveBtn.textContent === 'Load') {
+        loadSavedGame();
+        enableStopBtn();
+        saveBtn.textContent = 'Save';
+    }
+})
+
+function saveCurrentGame() {
     const game = document.querySelector('.game');
     let savedGame = game.innerHTML;
     const extra = {
@@ -38,7 +53,98 @@ saveBtn.addEventListener('click', () => {
     localStorage.currGame = JSON.stringify(savedGame);
     localStorage.extra = JSON.stringify(extra);
     alert('Your current game has been saved');
-})
+    saveBtn.textContent = 'Load';
+}
+
+function loadSavedGame() {
+    const savedGame = JSON.parse(localStorage.currGame);
+    const extra = JSON.parse(localStorage.extra);
+    movesCounter = extra.moves;
+    minutes = extra.minutes;
+    seconds = extra.seconds;
+    gameMatrix = extra.matrix;
+    const game = document.querySelector('.game');
+    game.innerHTML = '';
+    game.innerHTML = savedGame;
+    blankBox = gameMatrix.length ** 2;
+    const moves = document.querySelector('.extra__moves');
+    moves.textContent = `Moves: ${movesCounter}`;
+    disableShuffleBtn();
+    setGameCounter();
+    game.classList.remove('shuffling');
+
+    delete localStorage.currGame;
+    delete localStorage.extra;
+}
+
+function createPageLayout() {
+
+    const gameContainer = document.createElement('div');
+    gameContainer.classList.add('container');
+    gameContainer.innerHTML = `
+        <div class="sound">
+            Sound off<input type="checkbox"> on
+        </div>
+        <audio id="audio" src="./audio/sound_click.mp3"></audio>
+        <div class="buttons">
+            <button class="button button_shuffle">Shuffle and Start</button>
+            <button class="button button_stop">Stop</button>
+            <button class="button button_save">Save</button>
+            <button class="button button_results">Results</button>
+        </div>
+        <div class="extra">
+            <div class="extra__moves">Moves: ${movesCounter}</div>
+            <div class="extra__time">Time: ${minutes}:${seconds}</div>
+        </div>
+        <div class="game"></div>
+        <div class="sizes">
+            <div class="sizes__title">Frame size: 4 X 4</div>
+            <div class="sizes__variants"></div>
+        </div>
+    `;
+    document.body.append(gameContainer);
+
+    const sizeVariants = document.querySelector('.sizes__variants');
+    for(let i = 0; i < 6; i++) {
+        let variant = document.createElement('a');
+        variant.href = '#';
+        variant.id = `size-${i+3}`;
+        variant.textContent = `${i+3} X ${i+3}`;
+        sizeVariants.append(variant);
+    }
+}
+
+function createGame(gameSize = 4) {
+    let numbers = new Array(gameSize ** 2).fill(0).map((item, index) => index + 1);
+    const game = document.querySelector('.game');
+
+    numbers.forEach(num => {
+        const numBox = document.createElement('div');
+        numBox.classList.add('game__box', `game-size-${gameSize}`);
+        numBox.dataset.matrixId = num; 
+
+        const numTile = document.createElement('div');
+        numTile.classList.add('game__tile'); 
+        numTile.innerText = num;
+            
+        numBox.append(numTile);
+        game.append(numBox);
+    })
+
+    const boxes = Array.from(document.querySelectorAll('.game__box'));
+    let boxesIds = boxes.map(item => Number(item.dataset.matrixId));
+    gameMatrix = createMatrix(boxesIds, gameSize);
+    createTilesLayout(gameMatrix);
+    boxes[boxes.length - 1].style.visibility = 'hidden';
+    blankBox = boxes.length;
+    const moves = document.querySelector('.extra__moves');
+    movesCounter = 0;
+    moves.textContent = `Moves: ${movesCounter}`;
+    enableShuffleBtn();
+    disableStopBtn();
+    setCounterToNull();
+    game.classList.add('shuffling');
+}
 
 resultesBtn.addEventListener('click', () => {
     createResultsTable();
@@ -190,43 +296,6 @@ function findAvailableCoords({blankBoxCoords, matrix, blockedTile}) {
     return availableCoords;
 }
 
-function createPageLayout() {
-
-    const gameContainer = document.createElement('div');
-    gameContainer.classList.add('container');
-    gameContainer.innerHTML = `
-        <div class="sound">
-            Sound off<input type="checkbox"> on
-        </div>
-        <audio id="audio" src="./audio/sound_click.mp3"></audio>
-        <div class="buttons">
-            <button class="button button_shuffle">Shuffle and Start</button>
-            <button class="button button_stop">Stop</button>
-            <button class="button button_save">Save</button>
-            <button class="button button_results">Results</button>
-        </div>
-        <div class="extra">
-            <div class="extra__moves">Moves: ${movesCounter}</div>
-            <div class="extra__time">Time: ${minutes}:${seconds}</div>
-        </div>
-        <div class="game"></div>
-        <div class="sizes">
-            <div class="sizes__title">Frame size: 4 X 4</div>
-            <div class="sizes__variants"></div>
-        </div>
-    `;
-    document.body.append(gameContainer);
-
-    const sizeVariants = document.querySelector('.sizes__variants');
-    for(let i = 0; i < 6; i++) {
-        let variant = document.createElement('a');
-        variant.href = '#';
-        variant.id = `size-${i+3}`;
-        variant.textContent = `${i+3} X ${i+3}`;
-        sizeVariants.append(variant);
-    }
-}
-
 const sizeVariants = document.querySelector('.sizes__variants');
 sizeVariants.addEventListener('click', (e) => {
     if(!e.target.id) {
@@ -241,38 +310,6 @@ sizeVariants.addEventListener('click', (e) => {
     stopBtn.textContent = 'Stop';
     saveBtn.classList.remove('button_disabled');   
 })
-
-function createGame(gameSize = 4) {
-    let numbers = new Array(gameSize ** 2).fill(0).map((item, index) => index + 1);
-    const game = document.querySelector('.game');
-
-    numbers.forEach(num => {
-        const numBox = document.createElement('div');
-        numBox.classList.add('game__box', `game-size-${gameSize}`);
-        numBox.dataset.matrixId = num; 
-
-        const numTile = document.createElement('div');
-        numTile.classList.add('game__tile'); 
-        numTile.innerText = num;
-            
-        numBox.append(numTile);
-        game.append(numBox);
-    })
-
-    const boxes = Array.from(document.querySelectorAll('.game__box'));
-    let boxesIds = boxes.map(item => Number(item.dataset.matrixId));
-    gameMatrix = createMatrix(boxesIds, gameSize);
-    createTilesLayout(gameMatrix);
-    boxes[boxes.length - 1].style.visibility = 'hidden';
-    blankBox = boxes.length;
-    const moves = document.querySelector('.extra__moves');
-    movesCounter = 0;
-    moves.textContent = `Moves: ${movesCounter}`;
-    enableShuffleBtn();
-    disableStopBtn();
-    setCounterToNull();
-    game.classList.add('shuffling');
-}
 
 function createMatrix(arr, size) {
     let matrix = [];
@@ -450,25 +487,3 @@ function disableSaveBtn() {
     saveBtn.disabled = true;
     saveBtn.classList.add('button_disabled');
 }
-
-function loadSavedGame() {
-    const savedGame = JSON.parse(localStorage.currGame);
-    const extra = JSON.parse(localStorage.extra);
-    movesCounter = extra.moves;
-    minutes = extra.minutes;
-    seconds = extra.seconds;
-    gameMatrix = extra.matrix;
-    const game = document.querySelector('.game');
-    game.innerHTML = '';
-    game.innerHTML = savedGame;
-    blankBox = gameMatrix.length ** 2;
-    const moves = document.querySelector('.extra__moves');
-    moves.textContent = `Moves: ${movesCounter}`;
-    disableShuffleBtn();
-    setGameCounter();
-    game.classList.remove('shuffling');
-
-    delete localStorage.currGame;
-    delete localStorage.extra;
-}
-
