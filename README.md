@@ -1,2 +1,2 @@
-# svetik-k-JSFE2022Q3
-Private repository for @svetik-k
+# Gem Puzzle
+https://svetik-k.github.io/gem-puzzle/gem-puzzle/
